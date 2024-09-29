@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 const authRoutes = require('./routes/authRoutes').router;
 const notesRoutes = require('./routes/notesRoutes');
 const codeRoutes = require('./routes/codeRoutes');
@@ -21,8 +22,14 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/note', notesRoutes);
 app.use('/api/invites', codeRoutes);
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
 
 app.listen(3000, () => console.log('Server running on port 3000'));
