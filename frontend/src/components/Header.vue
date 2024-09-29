@@ -31,7 +31,7 @@
             return;
         }
 
-        const res = await fetch('http://192.168.1.228:3000/api/auth/logout', {
+        const res = await fetch('http://duo-duomemos.up.railway.app/api/auth/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -62,7 +62,7 @@
 
     async function checkPartnerStatus() {
         const token = localStorage.getItem('token');
-        const res = await fetch('http://192.168.1.228:3000/api/auth/check-partner', {
+        const res = await fetch('http://duo-duomemos.up.railway.app/api/auth/check-partner', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

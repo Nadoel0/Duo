@@ -8,7 +8,7 @@ const noteContent = ref(props.noteContent);
 
 async function loadNote(retry = true) {
     const token = localStorage.getItem('token');
-    const endpoint = props.isPartnerNoteVisible ? 'http://192.168.1.228:3000/api/note/partner/today' : 'http://192.168.1.228:3000/api/note/today';
+    const endpoint = props.isPartnerNoteVisible ? 'http://duo-duomemos.up.railway.app/api/note/partner/today' : 'http://duo-duomemos.up.railway.app/api/note/today';
     const res = await fetch(endpoint, {
         method: 'GET',
         headers: {
@@ -33,7 +33,7 @@ async function loadNote(retry = true) {
 
 async function saveNote() {
     const token = localStorage.getItem('token');
-    const res = await fetch('http://192.168.1.228:3000/api/note/save', {
+    const res = await fetch('http://duo-duomemos.up.railway.app/api/note/save', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -67,7 +67,7 @@ async function refreshToken() {
         return false;
     }
 
-    const res = await fetch('http://192.168.1.228:3000/api/auth/token/refresh', {
+    const res = await fetch('http://duo-duomemos.up.railway.app/api/auth/token/refresh', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

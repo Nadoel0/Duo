@@ -15,7 +15,7 @@
         const token = localStorage.getItem('token');
         const code = generatedInviteCode.value
 
-        const res = await fetch('http://192.168.1.228:3000/api/invites/generate', {
+        const res = await fetch('http://duo-duomemos.up.railway.app/api/invites/generate', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -50,7 +50,7 @@
         const token = localStorage.getItem('token');
         const code = inputInviteCode.value;
 
-        const res = await fetch('http://192.168.1.228:3000/api/invites/accept', {
+        const res = await fetch('http://duo-duomemos.up.railway.app/api/invites/accept', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

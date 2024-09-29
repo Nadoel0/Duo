@@ -8,7 +8,7 @@
     const error = ref('');
 
     async function login(email, password) {
-        const res = await fetch('http://192.168.1.228:3000/api/auth/login', {
+        const res = await fetch('http://duo-duomemos.up.railway.app/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -31,7 +31,7 @@
     async function fetchProtectedData() {
         const token = localStorage.getItem('token');
 
-        const res = await fetch('http://192.168.1.228:3000/api/auth/protected', {
+        const res = await fetch('http://duo-duomemos.up.railway.app/api/auth/protected', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

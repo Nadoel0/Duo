@@ -9,7 +9,7 @@
     const error = ref('');
 
     async function register(email, password) {
-        const res = await fetch('http://192.168.1.228:3000/api/auth/register', {
+        const res = await fetch('http://duo-duomemos.up.railway.app/api/auth/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
