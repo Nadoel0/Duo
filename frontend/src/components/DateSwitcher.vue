@@ -18,7 +18,7 @@
 
     async function noteForDate(date) {
         const token = localStorage.getItem('token');   
-        const endpoint = props.isPartnerNoteVisible ? `http://duo-duomemos.up.railway.app/api/note/partner/date?date=${date.toISOString()}` : `http://duo-duomemos.up.railway.app/api/note/date?date=${date.toISOString()}`;    
+        const endpoint = props.isPartnerNoteVisible ? `https://duo-duomemos.up.railway.app/api/note/partner/date?date=${date.toISOString()}` : `https://duo-duomemos.up.railway.app/api/note/date?date=${date.toISOString()}`;    
 
         const res = await fetch(endpoint, {
             method: 'GET',
