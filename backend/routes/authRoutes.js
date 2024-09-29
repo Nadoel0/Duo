@@ -6,7 +6,7 @@ const RefreshToken = require('../models/RefreshToken');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const jwtSecret = 'process.env.JWT_SECRET';
+const jwtSecret = process.env.JWT_SECRET;
 
 const generateToken = (user) => {
     const accessToken = jwt.sign({ userId: user._id }, jwtSecret, { expiresIn: '3h' });
@@ -54,7 +54,10 @@ router.post('/login', async (req, res) => {
 router.post('/token/refresh', async (req, res) => {
     const { refreshToken } = req.body;
 
-    if (!refreshToken) return res.status(401).json({ message: 'Refresh token required' });
+    if (!refreshToken) {
+        console.error('No refresh token in request body');
+        return res.status(401).json({ message: 'Refresh token required' });
+    }
 
     try {
         const decoded = jwt.verify(refreshToken, jwtSecret);
@@ -64,13 +67,16 @@ router.post('/token/refresh', async (req, res) => {
 
         const user = await User.findById(decoded.userId);
         const { accessToken, newRefreshToken } = generateToken(user);
+        console.log(newRefreshToken);
 
         await RefreshToken.findByIdAndDelete(existingToken._id);
         await RefreshToken.create({ userId: user._id, token: newRefreshToken });
 
         res.status(200).json({ accessToken, refreshToken: newRefreshToken });
     } catch (err) {
-        res.status(401).json({ message: 'Invalid refresh token '});
+        console.error(err);
+        await RefreshToken.findOneAndDelete({ token: refreshToken });
+        res.status(401).json({ message: 'Invalid refresh token! '});
     }
 });
 
@@ -82,17 +88,38 @@ const authenticateToken = (req, res, next) => {
 
     jwt.verify(token, jwtSecret, (err, user) => {
         if (err) return res.status(403).json({ message: 'Invalid Token' });
+        
         req.user = user;
         next();
     });
 }
+
+router.get('/check-partner', authenticateToken, async (req, res) => {
+    const user = await User.findById(req.user.userId);
+
+    if (user.partnerId) res.json({ hasPartner: true });
+    else res.json({ hasPartner: false });
+});
 
 router.get('/protected', authenticateToken, (req, res) => {
     res.json({ message: 'You have access!', userId: req.user.userId });
 });
 
 router.post('/logout', async (req, res) => {
-    return res.status(200).json({ message: 'Logged out successfully' })
+    const refreshToken = req.body.refreshToken;
+
+    if (!refreshToken) return res.status(400).json({ message: 'Refresh token required' });
+
+    try {
+        const result = await RefreshToken.findOneAndDelete({ token: refreshToken });
+
+        if (!result) return res.status(404).json({ message: 'Refresh token not found' });
+
+        return res.status(200).json({ message: 'Logged out successfully' })
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Error logging out' });
+    }
 });
 
-module.exports = router;
+module.exports = { router, authenticateToken };

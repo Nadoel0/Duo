@@ -19,6 +19,8 @@
 
         if (res.ok) {
             const { accessToken, refreshToken } = await res.json();
+            console.log(accessToken, refreshToken);
+            
             localStorage.setItem('token', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
             return true;

@@ -1,9 +1,13 @@
 <script setup>
-    import { ref } from 'vue';
+    import { ref, onMounted, defineEmits } from 'vue';
     import { useRouter } from 'vue-router';
+    import PartnerInvitation from './PartnerInvitation.vue';
 
     const router = useRouter();
     const isModalOpen = ref(false);
+    const showPartnerModal = ref(false);
+    const hasPartner = ref(false);
+    const emit = defineEmits();
 
     function openModal() {
         isModalOpen.value = true;
@@ -11,22 +15,38 @@
 
     function closeModal() {
         isModalOpen.value = false;
+        showPartnerModal.value = false;
+    }
+
+    function showAddPartner() {
+        isModalOpen.value = false;
+        showPartnerModal.value = true;
     }
 
     async function logout() {
+        const refreshToken = localStorage.getItem('refreshToken');
+
+        if (!refreshToken) {
+            router.push('/');
+            return;
+        }
+
         const res = await fetch('http://192.168.1.228:3000/api/auth/logout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({ refreshToken })
         });
 
         if (!res.ok) {
             const err = await res.json();
-            throw new Error(err.message || 'Something went wrong')
+            router.push('/');
+            throw new Error(err.message || 'Something went wrong');
         }
 
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
         return await res.json();
     }
 
@@ -37,10 +57,37 @@
             router.push('/');
         } catch (err) {
             console.error(err);
-            alert(err);
         }
     }
 
+    async function checkPartnerStatus() {
+        const token = localStorage.getItem('token');
+        const res = await fetch('http://192.168.1.228:3000/api/auth/check-partner', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            hasPartner.value = data.hasPartner;
+        }
+    }
+
+    async function viewPartnerNote() {
+       emit('isPartnerNoteVisible');
+       closeModal();
+    }
+
+    function toggleHasPartner() {
+        hasPartner.value = true;
+    }
+
+    onMounted(() => {
+        checkPartnerStatus();
+    });
 </script>
 
 <template>
@@ -52,10 +99,13 @@
         </div>
         <div v-show="isModalOpen" class="modal" @click.self="closeModal">
             <div class="modal-content">
-                <button @click="addPartner">Add Partner</button>
+                <button v-if="!hasPartner" @click="showAddPartner">Add Partner</button>
+                <button v-else @click="viewPartnerNote">Partner Note</button>
                 <button @click="handleLogout">Logout</button>
             </div>
         </div>
+
+        <PartnerInvitation v-if="showPartnerModal" @close-modal="closeModal" @has-partner="toggleHasPartner" @click.self="closeModal"/>
     </header>
 </template>
 
@@ -145,5 +195,6 @@
         box-shadow: 0 5px 25px rgba(0, 0, 0, 0.4);
         color: whitesmoke;
         text-align: center;
+        text-shadow: 0 0 10px whitesmoke;
     }
 </style>

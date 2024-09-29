@@ -2,11 +2,26 @@
     import Header from './Header.vue';
     import NoteField from './NoteField.vue';
     import DateSwitcher from './DateSwitcher.vue';
-    import { onMounted } from 'vue';
+    import { onMounted, ref } from 'vue';
     import { useRouter } from 'vue-router';
     import { jwtDecode } from "jwt-decode";
 
     const router = useRouter();
+    const userNoteContent = ref('');
+    const selectedDate = ref('');
+    const isPartnerNoteVisible = ref(false);
+
+    function handleNoteContentUpdate(newNoteContent) {       
+        userNoteContent.value = newNoteContent;        
+    }
+
+    function handleDateChange(newDate) {
+        selectedDate.value = newDate;
+    }
+
+    function togglePartnerVisible() {
+        isPartnerNoteVisible.value = true;
+    }
 
     function checkToken() {
         const token = localStorage.getItem('token');
@@ -40,9 +55,17 @@
 
 <template>
     <div class="main-page">
-        <Header />
-        <NoteField />
-        <DateSwitcher />
+        <Header @isPartnerNoteVisible="togglePartnerVisible" />
+        <NoteField 
+            :noteContent="userNoteContent" 
+            :noteDate="selectedDate" 
+            :isPartnerNoteVisible="isPartnerNoteVisible"
+        />
+        <DateSwitcher 
+            :isPartnerNoteVisible="isPartnerNoteVisible"
+            @note-content-updated="handleNoteContentUpdate" 
+            @selected-date-updated="handleDateChange" 
+        />
     </div>
 </template>
 
@@ -59,5 +82,10 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
+    }
+
+    Header {
+        position: relative;
+        z-index: 1000;
     }
 </style>

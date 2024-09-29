@@ -1,8 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const authRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/authRoutes').router;
 const notesRoutes = require('./routes/notesRoutes');
+const codeRoutes = require('./routes/codeRoutes');
 
 const app = express();
 
@@ -22,5 +23,6 @@ app.use((req, res, next) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/note', notesRoutes);
+app.use('/api/invites', codeRoutes);
 
 app.listen(3000, () => console.log('Server running on port 3000'));
