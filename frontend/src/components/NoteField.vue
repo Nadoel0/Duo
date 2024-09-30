@@ -90,6 +90,7 @@ async function refreshToken() {
 
 const isEditable = computed(() => {
     if (!props.noteDate) return true;
+    if (props.isPartnerNoteVisible) return true;
 
     const today = new Date();
     const noteDate = new Date(props.noteDate);
@@ -112,7 +113,7 @@ watch(() => props.isPartnerNoteVisible, (newValue) => {
 <template>
     <div class="noteField">
         <textarea v-model="noteContent" class="note" @input="saveNote" placeholder="Enter a note"
-            :readonly="!isEditable || props.isPartnerNoteVisible">
+            :readonly="!isEditable">
         </textarea>
     </div>
 </template>
