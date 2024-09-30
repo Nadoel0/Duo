@@ -112,7 +112,7 @@ watch(() => props.isPartnerNoteVisible, (newValue) => {
 <template>
     <div class="noteField">
         <textarea v-model="noteContent" class="note" @input="saveNote" placeholder="Enter a note"
-            :readonly="!isEditable || isPartnerNoteVisible">
+            :readonly="!isEditable || props.isPartnerNoteVisible">
         </textarea>
     </div>
 </template>
