@@ -114,7 +114,9 @@ router.get('/date', async (req, res) => {
     try {
         const decoded = jwt.verify(token, jwtSecret);
         const userId = decoded.userId;
+        console.log(`User ID from token: ${userId}`);
         const note = await Note.findOne({ userId, date });
+        console.log(`Found note: ${note}`);
         
         if (!note) return res.status(200).json({ content: "" });
 
