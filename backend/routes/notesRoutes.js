@@ -98,7 +98,7 @@ router.get('/partner/today', authenticateToken, async (req, res) => {
         const partnerNote = await Note.findOne({ userId: userPartner.partnerId, date: currentDate });
 
         if (!partnerNote) return res.status(200).json({ content: "" });
-
+        
         res.status(200).json(partnerNote);
     } catch (err) {
         console.error(err);

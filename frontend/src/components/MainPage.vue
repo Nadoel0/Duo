@@ -20,7 +20,7 @@
     }
 
     function togglePartnerVisible() {
-        isPartnerNoteVisible.value = true;
+        isPartnerNoteVisible.value === false ? isPartnerNoteVisible.value = true : isPartnerNoteVisible.value = false;
     }
 
     function checkToken() {
